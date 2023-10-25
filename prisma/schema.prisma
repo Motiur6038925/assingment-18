@@ -1,0 +1,133 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            BigInt      @id @default(autoincrement())
+  firstName     String      @db.VarChar(100)
+  middleName    String      @db.VarChar(50)
+  lastName      String      @db.VarChar(50)
+  mobile        String?      @db.VarChar(15)
+  email         String  @unique @db.VarChar(100)
+  passwordHash  String?      @db.VarChar(32)
+  registeredAt  DateTime?    @map("registeredAt")
+  lastLogin     DateTime?    @map("lastLogin")
+  intro         String?      @db.TinyText
+  profile       String?      @db.Text
+  Post          Post[]
+}
+
+model Post {
+  id             BigInt      @id @default(autoincrement()) 
+  authorId       BigInt ?     
+  parentId       BigInt ?     
+  title          String      @db.VarChar(75)
+  metaTitle      String?      @db.VarChar(100)
+  slug           String?      @db.VarChar(100)
+  summary        String @unique      
+  published      String?
+  created_at     DateTime?  @db.Timestamp(0)
+  updated_at     DateTime?  @db.Timestamp(0)
+  User_id        BigInt?
+  User           User ?       @relation(fields: [User_id], references: [id], map: "Post_User_id_foreign")
+ 
+
+}
+
+model PostComment {
+  id           BigInt      @id @default(autoincrement()) 
+  
+  title        String      @db.VarChar(100)
+  published    String?      @db.TinyText
+  created_at   DateTime?  @db.Timestamp(0)
+  updated_at   DateTime?  @db.Timestamp(0)
+  content      String     @unique      
+  
+        
+}
+
+model Tag {
+  id        BigInt      @id @default(autoincrement()) 
+  title     String      @db.VarChar(75)
+  metaTitle String?      @db.VarChar(100)
+  slug      String?      @db.VarChar(100)
+  content  String    @unique @db.VarChar(255)
+  
+}
+
+
+
+model Post_category {
+   id           BigInt      @id @default(autoincrement())
+  Post_id    BigInt
+  
+      
+  Category_id BigInt  @unique
+
+}
+
+
+model Category {
+  id           BigInt      @id @default(autoincrement()) 
+  parentId     BigInt?      
+  title        String      @db.VarChar(75)
+  metaTitle    String?      @db.VarChar(100)
+  slug         String?      @db.VarChar(100)
+  content      String       @unique
+  
+}
+
+model Post_tag {
+   id           BigInt      @id @default(autoincrement())
+  
+   Post_id    BigInt
+  
+      
+  Category_id BigInt  @unique
+
+}
+
+
+
+
+
+
+
+
+model PostMeta {
+  id      BigInt  @id @default(autoincrement())
+  key     String?  @db.VarChar(50)
+  title        String      @db.VarChar(100)
+  content String @unique
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
